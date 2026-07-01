@@ -244,7 +244,25 @@ function EditMonsterModal({ open, monster, onSave, onSaveToBestiary, onClose }) 
                 <div className="form-row"><label className="lbl">TN</label><input className="term-input" type="number" value={a.tn} onChange={(e) => {const arr = [...m.attacks];arr[i] = { ...a, tn: +e.target.value };set("attacks", arr);}} /></div>
                 <div className="form-row"><label className="lbl">dmg</label><input className="term-input" value={a.damage} onChange={(e) => {const arr = [...m.attacks];arr[i] = { ...a, damage: e.target.value };set("attacks", arr);}} /></div>
                 <div className="form-row"><label className="lbl">rng</label><input className="term-input" value={a.range} onChange={(e) => {const arr = [...m.attacks];arr[i] = { ...a, range: e.target.value };set("attacks", arr);}} /></div>
-                <div className="form-row"><label className="lbl">effects</label><CommaListInput className="term-input" value={a.effects} onChange={(eff) => {const arr = [...m.attacks];arr[i] = { ...a, effects: eff };set("attacks", arr);}} /></div>
+                <div className="form-row"><label className="lbl">effects</label>
+                  <CommaListInput className="term-input" value={a.effects} onChange={(eff) => {const arr = [...m.attacks];arr[i] = { ...a, effects: eff };set("attacks", arr);}} />
+                  <select className="term-input" value="" title={t.addTrait} style={{ marginTop: 3, fontSize: 11 }}
+                    onChange={(e) => {
+                      const v = e.target.value; if (!v) return;
+                      const cur = a.effects || [];
+                      if (!cur.some((x) => String(x).trim().toLowerCase() === v.toLowerCase())) {
+                        const arr = [...m.attacks]; arr[i] = { ...a, effects: [...cur, v] }; set("attacks", arr);
+                      }
+                      e.target.value = "";
+                    }}>
+                    <option value="">{t.addTrait}…</option>
+                    {(window.WEAPON_TRAITS || []).map((grp) =>
+                      <optgroup key={grp.group} label={grp.group === "Damage Effects" ? t.traitEffects : t.traitQualities}>
+                        {grp.items.map((it) => <option key={it} value={it}>{it}</option>)}
+                      </optgroup>
+                    )}
+                  </select>
+                </div>
                 <button className="term-btn danger" style={{ height: 30 }} onClick={() => removeAttack(a.id)}>✗</button>
               </div>
             )}

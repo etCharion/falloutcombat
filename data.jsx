@@ -365,22 +365,33 @@ window.DEFAULT_TEMPLATES = DEFAULT_TEMPLATES;
 // Function getTermDesc(termString, lang) handles "Piercing 1" → look up "piercing".
 const GAME_TERMS = {
   cs: {
-    // Weapon qualities (Fallout 2d20)
-    "piercing":    { name: "Piercing", desc: "Ignoruje N bodů odolnosti cíle (kde N = hodnota za názvem)." },
-    "vicious":     { name: "Vicious",  desc: "Za každý efekt na kostce přidá +1 zranění navíc." },
-    "burst":       { name: "Burst",    desc: "Útok zasahuje plochu — možnost zasáhnout více cílů. Spotřebuje extra munici." },
-    "persistent":  { name: "Persistent", desc: "Efekt přetrvává — cíl utrpí stejné zranění i v dalším kole, dokud se neuhasí/neošetří." },
-    "knockdown":   { name: "Knockdown", desc: "Při daném výsledku na kostce cíl spadne na zem (akce na vstávání)." },
-    "stun":        { name: "Stun",     desc: "Při daném výsledku cíl ztrácí příští akci." },
-    "spread":      { name: "Spread",   desc: "Brokový rozptyl — bonus k zásahu na blízko, postih na dálku." },
-    "accurate":    { name: "Accurate", desc: "+1k Combat Dice při využití Aim action." },
-    "inaccurate":  { name: "Inaccurate", desc: "−1k Combat Dice při útoku." },
-    "blast":       { name: "Blast",    desc: "Výbuch — zasahuje všechny v zóně." },
-    "two-handed":  { name: "Two-Handed", desc: "Vyžaduje obě ruce." },
-    "unreliable":  { name: "Unreliable", desc: "Při neúspěchu se může zbraň zaseknout." },
-    "reliable":    { name: "Reliable", desc: "Snížená šance na zaseknutí." },
-    "close quarters": { name: "Close Quarters", desc: "Bez postihu na blízko (Close range)." },
-    "gun bash":    { name: "Gun Bash", desc: "Lze použít jako melee zbraň (1CD)." },
+    // === Efekty zranění (Fallout 2d20) — spouštěné symboly Efektů na Combat kostkách ===
+    "vicious":     { name: "Vicious",  desc: "Za každý padlý Efekt (symbol na Combat kostce) způsobí útok +1 zranění navíc." },
+    "piercing":    { name: "Piercing", desc: "Za každý padlý Efekt ignoruje X bodů odolnosti (DR) cíle (X = hodnota za názvem)." },
+    "burst":       { name: "Burst",    desc: "Za každý padlý Efekt zasáhne útok jeden další cíl v dosahu Close od hlavního cíle; každý další cíl stojí 1 jednotku munice navíc." },
+    "breaking":    { name: "Breaking", desc: "Za každý padlý Efekt trvale sníží o 1 odolnost (DR), kterou cíli poskytuje kryt. Není-li cíl v krytu, sníží místo toho o 1 DR zasažené části těla (podle typu zranění zbraně)." },
+    "persistent":  { name: "Persistent", desc: "Padne-li aspoň jeden Efekt, cíl utrpí zranění zbraně znovu na konci svého příštího a dalších tahů, po počet kol rovný počtu padlých Efektů. Cíl může utratit major akci a testem (obtížnost = počet Efektů) efekt ukončit dříve." },
+    "radioactive": { name: "Radioactive", desc: "Za každý padlý Efekt utrpí cíl navíc 1 bod radiačního zranění; to se sečte a aplikuje zvlášť až po běžném zranění." },
+    "spread":      { name: "Spread",   desc: "Za každý padlý Efekt zasadí útok jeden další zásah. Každý další zásah způsobí polovinu hozeného zranění (zaokrouhleno dolů) do náhodné části těla, i když byla cílena konkrétní část." },
+    "stun":        { name: "Stun",     desc: "Padne-li aspoň jeden Efekt, cíl nemůže ve svém příštím tahu provést své běžné akce. Může však stále utrácet AP na dodatečné akce." },
+    // === Vlastnosti zbraní (Fallout 2d20) — stálé vlastnosti zbraně ===
+    "accurate":    { name: "Accurate", desc: "Provedeš-li před útokem minor akci Zamíření (Aim), můžeš utratit až 3 AP a za každý přidat +1 CD ke zranění. Získáš-li takto zranění, nemůžeš už utrácet munici na další zranění." },
+    "inaccurate":  { name: "Inaccurate", desc: "Při útoku touto zbraní nemáš žádný přínos z minor akce Zamíření (Aim)." },
+    "blast":       { name: "Blast",    desc: "Útok necílí na jednoho nepřítele, ale na celou zónu (základní obtížnost 2, upravená podle dosahu). Při úspěchu utrpí zranění vše v zóně; při neúspěchu se hodí jen polovina CD zbraně a její efekty zranění se ignorují." },
+    "close quarters": { name: "Close Quarters", desc: "Útok touto zbraní na cíl v dosahu (Reach/Close) nezvyšuje obtížnost útoku (běžně je útok na dálkovou zbraň na cíl v dosahu těžší)." },
+    "concealed":   { name: "Concealed", desc: "Zbraň je malá nebo jinak snadno ukrytelná, takže se dá snáz udržet mimo dohled." },
+    "debilitating":{ name: "Debilitating", desc: "Obtížnost jakéhokoli testu na ošetření zranění (injuries) způsobeného touto zbraní se zvyšuje o +1." },
+    "gatling":     { name: "Gatling",  desc: "Spotřebovává munici desetkrát rychleji (každý výstřel je dávka 10 nábojů). Když utrácíš munici na zvýšení zranění, přidej +2 CD za každou desetinábojovou dávku (max. do výše Fire Rate zbraně) místo +1 CD za náboj." },
+    "mine":        { name: "Mine",     desc: "Po položení na povrch a aktivaci se stane pastí, která způsobí své zranění každému, kdo se dostane do dosahu (a dalším, má-li i vlastnost Blast)." },
+    "night vision":{ name: "Night Vision", desc: "Když touto zbraní Zamíříš (Aim), ignoruješ jakékoli zvýšení obtížnosti útoku způsobené tmou." },
+    "parry":       { name: "Parry",    desc: "Když se tě nepřítel pokusí zasáhnout útokem na blízko a ty držíš tuto zbraň, můžeš utratit 1 AP a získat +1 k Obraně proti tomuto útoku." },
+    "recon":       { name: "Recon",    desc: "Když touto zbraní Zamíříš (Aim), můžeš označit cíl, na který jsi mířil; první spojenec, který na tento cíl zaútočí, si smí přehodit jednu d20." },
+    "reliable":    { name: "Reliable", desc: "V každém boji tato zbraň ignoruje první komplikaci, kterou při jejím použití hodíš. Zbraň nemůže být zároveň Reliable i Unreliable." },
+    "suppressed":  { name: "Suppressed", desc: "Pokud si tě nepřítel není vědom, když zaútočíš, útoku si nevšimne, ledaže je jeho cílem nebo uspěje v testu PER + Survival (obtížnost 2)." },
+    "thrown":      { name: "Thrown",   desc: "Zbraň lze hodit jako útok na dálku; hodnota v závorce udává ideální dosah — Thrown (C) = Close, Thrown (M) = Medium." },
+    "throwing":    { name: "Thrown",   desc: "Zbraň lze hodit jako útok na dálku; hodnota v závorce udává ideální dosah — Thrown (C) = Close, Thrown (M) = Medium." },
+    "two-handed":  { name: "Two-Handed", desc: "Zbraň se musí držet oběma rukama; útok touto zbraní jednou rukou zvyšuje obtížnost útoku o +2." },
+    "unreliable":  { name: "Unreliable", desc: "Při útoku touto zbraní se rozsah komplikace zvětší o 1 (komplikace nastane při hodu 19–20 místo jen 20). Zbraň nemůže být zároveň Reliable i Unreliable." },
     // Attributes
     "body":   { name: "TĚLO", desc: "Fyzická síla, odolnost, výdrž. Používá se pro úsilí, tělesnou kondici a nesení nákladu." },
     "mind":   { name: "MYSL", desc: "Intelekt, vůle, vnímavost. Používá se pro vědu, technologii, vyjednávání a smysly." },
@@ -403,21 +414,33 @@ const GAME_TERMS = {
     "rad_eff":{ name: "Radiace", desc: "Akumuluje radiační zranění; snižuje maximální HP." },
   },
   mixed: {
-    "piercing":    { name: "Piercing", desc: "Ignores N points of the target's DR (where N = value after name)." },
-    "vicious":     { name: "Vicious",  desc: "Each effect rolled on Combat Dice adds +1 extra damage." },
-    "burst":       { name: "Burst",    desc: "Hits an area — can hit multiple targets. Uses extra ammo." },
-    "persistent":  { name: "Persistent", desc: "Effect persists — target takes same damage next round until extinguished/treated." },
-    "knockdown":   { name: "Knockdown", desc: "On the listed dice result, target falls prone." },
-    "stun":        { name: "Stun",     desc: "On the listed result, target loses next action." },
-    "spread":      { name: "Spread",   desc: "Shotgun spread — bonus to hit close, penalty at range." },
-    "accurate":    { name: "Accurate", desc: "+1 CD when using Aim action." },
-    "inaccurate":  { name: "Inaccurate", desc: "−1 CD on attack." },
-    "blast":       { name: "Blast",    desc: "Explosive — hits everyone in the zone." },
-    "two-handed":  { name: "Two-Handed", desc: "Requires both hands." },
-    "unreliable":  { name: "Unreliable", desc: "May jam on failure." },
-    "reliable":    { name: "Reliable", desc: "Reduced jam chance." },
-    "close quarters": { name: "Close Quarters", desc: "No penalty at Close range." },
-    "gun bash":    { name: "Gun Bash", desc: "Can be used as a melee weapon (1CD)." },
+    // === Damage Effects (Fallout 2d20) — triggered by Effect symbols rolled on Combat Dice ===
+    "vicious":     { name: "Vicious",  desc: "The attack inflicts +1 damage for each Effect rolled on the Combat Dice." },
+    "piercing":    { name: "Piercing", desc: "For each Effect rolled, ignore X points of the target's Damage Resistance (X = value after the name)." },
+    "burst":       { name: "Burst",    desc: "For each Effect rolled, the attack hits one additional target within Close range of the primary target. Each additional target costs 1 extra unit of ammo." },
+    "breaking":    { name: "Breaking", desc: "For each Effect rolled, permanently reduce the DR the target's cover provides by 1. If the target isn't in cover, instead reduce the struck location's DR by 1 (of the weapon's damage type)." },
+    "persistent":  { name: "Persistent", desc: "If one or more Effects are rolled, the target suffers the weapon's damage again at the end of their next and subsequent turns, for a number of rounds equal to the Effects rolled. The target may spend a major action on a test (difficulty = Effects rolled) to end it early." },
+    "radioactive": { name: "Radioactive", desc: "For each Effect rolled, the target also suffers 1 Radiation damage, totaled and applied separately after the normal damage." },
+    "spread":      { name: "Spread",   desc: "For each Effect rolled, the attack inflicts one additional hit. Each extra hit deals half the rolled damage (rounded down) to a random location, even if a specific location was targeted." },
+    "stun":        { name: "Stun",     desc: "If one or more Effects are rolled, the target cannot take their normal actions on their next turn. A stunned target may still spend AP for additional actions." },
+    // === Weapon Qualities (Fallout 2d20) — permanent traits of the weapon ===
+    "accurate":    { name: "Accurate", desc: "If you take the Aim minor action before attacking, you may spend up to 3 AP to add +1 CD damage per AP spent. If you add damage this way, you can't also spend ammo for extra damage." },
+    "inaccurate":  { name: "Inaccurate", desc: "You gain no benefit from the Aim minor action when attacking with this weapon." },
+    "blast":       { name: "Blast",    desc: "Target a zone instead of a single enemy (base difficulty 2, adjusted for range). On success, everything in the zone takes the weapon's damage; on failure, roll only half the weapon's CD and ignore its damage effects." },
+    "close quarters": { name: "Close Quarters", desc: "Attacking a target within Reach with this weapon doesn't increase the attack's difficulty (normally a ranged attack at Reach is harder)." },
+    "concealed":   { name: "Concealed", desc: "This weapon is small or otherwise easy to hide, making it easier to keep out of sight." },
+    "debilitating":{ name: "Debilitating", desc: "The difficulty of any test to treat injuries inflicted by this weapon increases by +1." },
+    "gatling":     { name: "Gatling",  desc: "Spends ammo ten times faster (each shot is a 10-round burst). When you spend ammo to boost damage, add +2 CD per ten-shot burst (up to the weapon's Fire Rate) instead of +1 CD per shot." },
+    "mine":        { name: "Mine",     desc: "When placed on a surface and primed, this becomes a trap that inflicts its damage on anyone who comes within Reach (and others too, if it also has Blast)." },
+    "night vision":{ name: "Night Vision", desc: "When you Aim with this weapon, you ignore any increase to the attack's difficulty caused by darkness." },
+    "parry":       { name: "Parry",    desc: "When an enemy attempts a melee attack against you while you wield this weapon, you may spend 1 AP to add +1 to your Defense against that attack." },
+    "recon":       { name: "Recon",    desc: "When you Aim with this weapon you may mark the target you aimed at; the next ally to attack that target may re-roll one d20." },
+    "reliable":    { name: "Reliable", desc: "During each combat encounter, this weapon ignores the first complication you roll while using it. A weapon can't be both Reliable and Unreliable." },
+    "suppressed":  { name: "Suppressed", desc: "If an enemy is unaware of you when you attack, they don't notice the attack unless they're the target or pass a PER + Survival test (difficulty 2)." },
+    "thrown":      { name: "Thrown",   desc: "Can be thrown as a ranged attack; the value in parentheses is the ideal range — Thrown (C) = Close, Thrown (M) = Medium." },
+    "throwing":    { name: "Thrown",   desc: "Can be thrown as a ranged attack; the value in parentheses is the ideal range — Thrown (C) = Close, Thrown (M) = Medium." },
+    "two-handed":  { name: "Two-Handed", desc: "Must be wielded in two hands; attacking with it one-handed increases the attack's difficulty by +2." },
+    "unreliable":  { name: "Unreliable", desc: "Increases the attack's complication range by 1 (a complication occurs on 19–20 instead of just 20). A weapon can't be both Reliable and Unreliable." },
     "body":   { name: "BODY",   desc: "Physical strength, toughness, stamina. Used for exertion, fitness, carrying load." },
     "mind":   { name: "MIND",   desc: "Intellect, willpower, perception. Used for science, tech, negotiation, senses." },
     "melee":  { name: "MELEE",  desc: "Skill in close combat — fists, blades, clubs, axes." },
@@ -446,5 +469,13 @@ function getTermDesc(term, lang = "mixed") {
   return dict[key] || null;
 }
 
+// Selectable weapon traits for the attack editor (Fallout 2d20). Grouped so the
+// UI can show optgroups; parameterised traits carry an example value the user can edit.
+const WEAPON_TRAITS = [
+  { group: "Damage Effects", items: ["Vicious", "Piercing 1", "Burst", "Breaking", "Persistent", "Radioactive", "Spread", "Stun"] },
+  { group: "Weapon Qualities", items: ["Accurate", "Inaccurate", "Blast", "Close Quarters", "Concealed", "Debilitating", "Gatling", "Mine", "Night Vision", "Parry", "Recon", "Reliable", "Suppressed", "Thrown", "Two-Handed", "Unreliable"] },
+];
+
 window.GAME_TERMS = GAME_TERMS;
 window.getTermDesc = getTermDesc;
+window.WEAPON_TRAITS = WEAPON_TRAITS;
